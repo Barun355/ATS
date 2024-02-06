@@ -96,7 +96,7 @@ def ats():
 def main():
     
     st.header("Help us to improve our service by donation")
-    st.image("QR.jpeg", width=200)
+    st.image("QR.jpeg", width=400)
     ats()
     
 main()
