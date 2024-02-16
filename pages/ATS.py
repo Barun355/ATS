@@ -92,5 +92,4 @@ def ats():
             st.write(response)
         else:
             st.write("Please Upload a pdf")
-
 ats()
