@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from pymongo import MongoClient
+import json
 import os
 
 
@@ -11,6 +12,7 @@ class Database():
         self.client = MongoClient(os.getenv("MONGO_URI"))
         self.ats_database = self.client["ats"]
         self.ats_collection = self.ats_database["ats-payment"]
+        self.resume_collection = self.ats_database["user-resume"]
         
         
     def add_proof(self, name, email, amount, upi_id, transaction_id):
@@ -42,3 +44,25 @@ class Database():
                 "uinqueCode": None
             }
 
+    def create_resume(self, **kwars):
+        
+        details = {key: value for key, value in kwars.items()}
+
+        
+        print(json.dumps(details, indent=4))
+        resume_detail = self.resume_collection.insert_one(details)
+        
+
+        if resume_detail:
+            return {
+                "error": None,
+                "message": None,
+                "status": True
+            }
+        
+        return {
+                "message": "Enter first first Five detail",
+                "status": False,
+                "error": "Invalid input",
+        }
+        

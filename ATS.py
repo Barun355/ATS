@@ -6,13 +6,10 @@ import streamlit as st
 import os
 import io
 import base64
-from PIL import Image
 import pdf2image
 import google.generativeai as genai
-from database import Database
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-ats_database = Database()
 
 def get_gemini_response(input, pdf_content, prompt):
     model = genai.GenerativeModel("gemini-pro-vision")
@@ -66,12 +63,14 @@ def ats():
         the provided resume against the job description for this profiles.
         Please share your professional evaluation on whether the candidate's profile aligns with the role.
         Highlight the strengths and weaknesses of the applicant in relation to the specified job requirements.
+        If the given resume details doesn't match with the job description then give a guide, how to make the resume specifically for the job dexcription.
     """
 
     input_prompt3 = """
         You are an skilled ATS (Applicant Tracking System) scanner with a deep understanding of Data Science, Full Stack Web Devlopment, Big Data Engineering, DEVOPS, Data Analyst, and deep ATS functionality, 
         your task is to evaluate the resume against the provided job description. give me the percentage of match if the resume matches
         the job description. First the output should come as percentage and then keywords missing and last final thoughts.
+        if the job description doesn't match the criteria then the percentage should be shown accordingly which can lie from 0 percent to 100 percentage
     """
 
 
@@ -94,38 +93,4 @@ def ats():
         else:
             st.write("Please Upload a pdf")
 
-
-def donateHandle(name, email, amount, upi, transaction_id):    
-    unique_code = ats_database.add_proof(name, email, amount, upi, transaction_id)
-    
-    if unique_code["error"]:
-        st.write(unique_code["error"])
-        return False
-    elif unique_code["unique_code"]:
-        st.header("Your unique ID please keep it with you")
-        st.write(unique_code["unique_code"])
-        return True
-
-
-def main():
-    
-    ats()
-    
-    st.header("Help us to improve our service by donation")
-    st.image("QR.jpeg", width=400)
-    
-    with st.form("donate_form"):
-        st.header("Thank u For your Kindness")
-        donater_name = st.text_input("Enter your name")
-        donater_email = st.text_input("Enter your email")
-        donater_amount = st.text_input("Amount you donate")
-        donater_upi_id = st.text_input("Enter your UPI id")
-        transaction_id = st.text_input("Transaction ID")
-        donated_button = st.form_submit_button("Donate")
-        
-    
-    if donated_button:
-        donateHandle(donater_name, donater_email, donater_amount, donater_upi_id, transaction_id)
-        
-
-main()
+ats()
